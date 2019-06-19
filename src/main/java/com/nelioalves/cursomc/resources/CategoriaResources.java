@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,8 @@ public class CategoriaResources {
 	//Aplicações restful usam o método POST para inserções
 	@RequestMapping(method = RequestMethod.POST)
 	//O @RequestBody é resposável por converter o objeto Json em objeto java
-	public ResponseEntity<Void> insert(@RequestBody Categoria obj){
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto){
+		Categoria obj = service.fromDTO(objDto);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		//OBS: A resposta deve ter status de created e retornar a URI do novo objeto criado
@@ -46,7 +49,8 @@ public class CategoriaResources {
 	
 	//Será criado um objeto categoria com os dados que foram passados no json e recebido o id da url
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Categoria obj,@PathVariable Integer id){
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto,@PathVariable Integer id){
+		Categoria obj = service.fromDTO(objDto);
 		//OBS: segundo o professor, isso seria somente uma garantia que está atualizando o
 		//objeto correto, porém, caso essa linha não seja colocada, é gerado um erro dizendo
 		//que o id não pode ser nulo.
