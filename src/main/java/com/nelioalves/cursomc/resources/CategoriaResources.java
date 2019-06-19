@@ -39,11 +39,23 @@ public class CategoriaResources {
 		return ResponseEntity.created(uri).build();
 	}
 	
+	//Será criado um objeto categoria com os dados que foram passados no json e recebido o id da url
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Categoria obj,@PathVariable Integer id){
+		//OBS: segundo o professor, isso seria somente uma garantia que está atualizando o
+		//objeto correto, porém, caso essa linha não seja colocada, é gerado um erro dizendo
+		//que o id não pode ser nulo.
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@RequestMapping(method = RequestMethod.DELETE,value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Integer id){
+		service.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	
 
 }
