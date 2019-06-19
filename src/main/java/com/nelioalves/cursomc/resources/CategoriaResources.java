@@ -21,18 +21,29 @@ public class CategoriaResources {
 	@Autowired
 	private CategoriaService service;
 	
+	//Aplicações restful usam o método GET para busca
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
-	public ResponseEntity<?> listar(@PathVariable Integer id) {
+	public ResponseEntity<Categoria> listar(@PathVariable Integer id) {
 		
-		Categoria obj = service.buscar(id);
+		Categoria obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	//Aplicações restful usam o método POST para inserções
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> inserir(@RequestBody Categoria obj){
-		obj = service.inserir(obj);
+	//O @RequestBody é resposável por converter o objeto Json em objeto java
+	public ResponseEntity<Void> insert(@RequestBody Categoria obj){
+		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		//OBS: A resposta deve ter status de created e retornar a URI do novo objeto criado
 		return ResponseEntity.created(uri).build();
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+	public ResponseEntity<Void> update(@RequestBody Categoria obj,@PathVariable Integer id){
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
 	}
 
 }
