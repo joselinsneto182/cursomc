@@ -1,5 +1,6 @@
 package com.nelioalves.cursomc.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nelioalves.cursomc.domain.Cliente;
 import com.nelioalves.cursomc.dto.ClienteDTO;
+import com.nelioalves.cursomc.dto.ClienteNewDTO;
 import com.nelioalves.cursomc.services.ClienteService;
 
 @RestController
@@ -30,6 +33,17 @@ public class ClienteResources {
 	public ResponseEntity<Cliente> find(@PathVariable Integer id){
 		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
+	}
+	
+	//Aplicações restful usam o método POST para inserções
+	@RequestMapping(method = RequestMethod.POST)
+	//O @RequestBody é resposável por converter o objeto Json em objeto java
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto){
+		Cliente obj = service.fromDTO(objDto);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		//OBS: A resposta deve ter status de created e retornar a URI do novo objeto criado
+		return ResponseEntity.created(uri).build();
 	}
 	
 	//Será criado um objeto categoria com os dados que foram passados no json e recebido o id da url
