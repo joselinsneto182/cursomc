@@ -30,7 +30,7 @@ public class CategoriaResources {
 	
 	//Aplicações restful usam o método GET para busca
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
-	public ResponseEntity<Categoria> listar(@PathVariable Integer id) {
+	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
 		
 		Categoria obj = service.find(id);
 		return ResponseEntity.ok().body(obj);

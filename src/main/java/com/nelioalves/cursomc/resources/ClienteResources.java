@@ -1,13 +1,22 @@
 package com.nelioalves.cursomc.resources;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nelioalves.cursomc.domain.Cliente;
+import com.nelioalves.cursomc.dto.ClienteDTO;
 import com.nelioalves.cursomc.services.ClienteService;
 
 @RestController
@@ -21,6 +30,42 @@ public class ClienteResources {
 	public ResponseEntity<Cliente> find(@PathVariable Integer id){
 		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
+	}
+	
+	//Será criado um objeto categoria com os dados que foram passados no json e recebido o id da url
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDto,@PathVariable Integer id){
+		Cliente obj = service.fromDTO(objDto);
+		//OBS: segundo o professor, isso seria somente uma garantia que está atualizando o
+		//objeto correto, porém, caso essa linha não seja colocada, é gerado um erro dizendo
+		//que o id não pode ser nulo.
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE,value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Integer id){
+		service.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<ClienteDTO>> listAll(){
+		List<Cliente> lista =  service.listAll();
+		List<ClienteDTO> listaDto =  lista.stream().map(obj -> new ClienteDTO(obj)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaDto);
+	}
+	
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	public ResponseEntity<Page<ClienteDTO>> listPage(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction){
+		Page<Cliente> lista =  service.listPage(page, linesPerPage, orderBy, direction);
+		Page<ClienteDTO> pagesDto =  lista.map(obj -> new ClienteDTO(obj));
+		return ResponseEntity.ok().body(pagesDto);
 	}
 
 }
