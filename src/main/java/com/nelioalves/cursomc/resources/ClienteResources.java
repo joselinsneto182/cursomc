@@ -37,6 +37,12 @@ public class ClienteResources {
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	@RequestMapping(value = "/email", method = RequestMethod.GET)
+	public ResponseEntity<Cliente> find(@RequestParam(value = "value") String email){
+		Cliente obj = service.findByEmail(email);
+		return ResponseEntity.ok().body(obj);
+	}
+	
 	//Aplicações restful usam o método POST para inserções
 	@RequestMapping(method = RequestMethod.POST)
 	//O @RequestBody é resposável por converter o objeto Json em objeto java
