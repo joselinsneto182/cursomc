@@ -48,8 +48,6 @@ public class Cliente implements Serializable{
 	@CollectionTable(name = "PERFIS")
 	private Set<Integer> perfis = new HashSet<Integer>();
 	
-	private String imageURL;
-	
 	public String getSenha() {
 		return senha;
 	}
@@ -172,14 +170,6 @@ public class Cliente implements Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	public String getImageURL() {
-		return imageURL;
-	}
-
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
 	}
 
 }
